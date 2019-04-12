@@ -3,9 +3,9 @@ import argparse
 import sys
 
 
-def read_file_with_options(*files, pattern, show_only_file_names, print_lines):
+def read_file_with_options(files, pattern, show_only_file_names, print_lines):
     '''
-        Reads files from the specified path
+        Reads files from the specified path.
         This sofware should be executed on the same path where the files are located.
     '''
 
@@ -46,21 +46,25 @@ def default_file_reading(file, pattern, should_print_line):
             lineNumber += 1
             if text_matches_pattern(line, pattern):
                 print('{:>4} {}'.format(lineNumber, line.rstrip()))
+
     else:
         for line in file:
             if text_matches_pattern(line, pattern):
                 print('{:>4}'.format(line.rstrip()))
+    print(' ')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('infiles', nargs='?', type=str,
+    parser.add_argument('--infiles', nargs='+', type=str,
                         help="The name of the files to be read")
+    parser.add_argument('--pattern', type=str,
+                        help="The pattern to be matched")
     parser.add_argument("-l", help="Show only the names of the files that contain at least one matching line",
                         action="store_true")
     parser.add_argument("-n", help="Show also the number of the lines matching a pattern",
                         action="store_true")
     arguments = parser.parse_args()
 
-    read_file_with_options(arguments.infiles, pattern='hello',
+    read_file_with_options(arguments.infiles, pattern=arguments.pattern,
                            show_only_file_names=arguments.l, print_lines=arguments.n)
