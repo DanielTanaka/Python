@@ -3,7 +3,8 @@ import argparse
 import sys
 
 
-def read_file_with_options(files, pattern, show_only_file_names, print_lines):
+def read_file_with_options(files, pattern, show_only_file_names,
+                           should_print_lines):
     '''
         Reads files from the specified path.
         This sofware should be executed on the same path where the files are located.
@@ -15,7 +16,9 @@ def read_file_with_options(files, pattern, show_only_file_names, print_lines):
                 if has_a_matching_item(openedFile, pattern):
                     print(openedFile.name)
             else:
-                default_file_reading(openedFile, pattern, print_lines)
+                matching_lines_dictionary = get_all_matching_lines_from_file(
+                    openedFile, pattern, should_print_lines)
+                print(matching_lines_dictionary)
 
 
 def has_a_matching_item(file, pattern):
@@ -34,24 +37,27 @@ def has_a_matching_item(file, pattern):
 
 
 def text_matches_pattern(text, pattern):
-    return bool(re.search(pattern, text))
+    return re.search(pattern, text) is not None
 
 
-def default_file_reading(file, pattern, should_print_line):
-    print("Occurrences in file:", file.name)
+def get_all_matching_lines_from_file(file, pattern, should_print_line):
+    matching_lines_dictionary = {}
+    matching_lines_list = []
 
     if should_print_line:
         lineNumber = 0
         for line in file:
             lineNumber += 1
             if text_matches_pattern(line, pattern):
-                print('{:>4} {}'.format(lineNumber, line.rstrip()))
-
+                tuple_with_number_line = (lineNumber, line.rstrip())
+                matching_lines_list.append(tuple_with_number_line)
     else:
         for line in file:
             if text_matches_pattern(line, pattern):
-                print('{:>4}'.format(line.rstrip()))
-    print(' ')
+                matching_lines_list.append(line.strip())
+
+    matching_lines_dictionary[file.name] = matching_lines_list
+    return matching_lines_dictionary
 
 
 if __name__ == '__main__':
@@ -66,5 +72,7 @@ if __name__ == '__main__':
                         action="store_true")
     arguments = parser.parse_args()
 
+    # python .\run.py [options] [files] [pattern]
+
     read_file_with_options(arguments.infiles, pattern=arguments.pattern,
-                           show_only_file_names=arguments.l, print_lines=arguments.n)
+                           show_only_file_names=arguments.l, should_print_lines=arguments.n)
