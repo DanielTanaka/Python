@@ -1,6 +1,7 @@
 import re
 import argparse
 import sys
+import pprint
 
 
 def read_file_with_options(files, pattern, show_only_file_names,
@@ -16,9 +17,10 @@ def read_file_with_options(files, pattern, show_only_file_names,
                 if has_a_matching_item(openedFile, pattern):
                     print(openedFile.name)
             else:
+                pretty_print = pprint.PrettyPrinter()
                 matching_lines_dictionary = get_all_matching_lines_from_file(
                     openedFile, pattern, should_print_lines)
-                print(matching_lines_dictionary)
+                pretty_print.pprint(matching_lines_dictionary)
 
 
 def has_a_matching_item(file, pattern):
@@ -62,17 +64,15 @@ def get_all_matching_lines_from_file(file, pattern, should_print_line):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--infiles', nargs='+', type=str,
+    parser.add_argument('infiles', nargs='+', type=str,
                         help="The name of the files to be read")
-    parser.add_argument('--pattern', type=str,
+    parser.add_argument('pattern', type=str,
                         help="The pattern to be matched")
     parser.add_argument("-l", help="Show only the names of the files that contain at least one matching line",
                         action="store_true")
     parser.add_argument("-n", help="Show also the number of the lines matching a pattern",
                         action="store_true")
     arguments = parser.parse_args()
-
-    # python .\run.py [options] [files] [pattern]
 
     read_file_with_options(arguments.infiles, pattern=arguments.pattern,
                            show_only_file_names=arguments.l, should_print_lines=arguments.n)
