@@ -51,8 +51,8 @@ def get_all_matching_lines_from_file(file, pattern, should_print_line):
         for line in file:
             lineNumber += 1
             if text_matches_pattern(line, pattern):
-                tuple_with_number_line = (lineNumber, line.rstrip())
-                matching_lines_list.append(tuple_with_number_line)
+                tuple_with_line_number = (lineNumber, line.rstrip())
+                matching_lines_list.append(tuple_with_line_number)
     else:
         for line in file:
             if text_matches_pattern(line, pattern):
